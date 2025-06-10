@@ -1,0 +1,40 @@
+
+import requests
+
+API_KEY = "AIzaSyC--RKrSMyj4ud3MsTKAu2aLD9BZCstO2Q"
+SEARCH_ENGINE_ID = "84158ccbcb17b947db"
+
+def search_google(query="منظومة طاقة شمسية العراق", max_results=5):
+    url = f"https://www.googleapis.com/customsearch/v1"
+    params = {
+        "key": API_KEY,
+        "cx": SEARCH_ENGINE_ID,
+        "q": query
+    }
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        results = response.json().get("items", [])[:max_results]
+        offers = []
+        for item in results:
+            offers.append({
+                "title": item.get("title", ""),
+                "snippet": item.get("snippet", ""),
+                "price": 0,
+                "currency": "Unknown",
+                "governorate": "Unknown",
+                "source": "Google",
+                "link": item.get("link", "")
+            })
+        return offers
+    except Exception as e:
+        print(f"Error fetching from Google CSE: {e}")
+        return [{
+            "title": "Google CSE Error",
+            "snippet": str(e),
+            "price": 0,
+            "currency": "Unknown",
+            "governorate": "Unknown",
+            "source": "Google",
+            "link": ""
+        }]
