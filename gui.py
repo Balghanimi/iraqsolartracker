@@ -22,6 +22,8 @@ class SolarApp(tk.Tk):
         self.pdf_var = tk.BooleanVar(value=True)
         self.excel_var = tk.BooleanVar(value=False)
         self.chat_id_var = tk.StringVar()
+        self.use_cse_var = tk.BooleanVar(value=True)
+
 
         self.create_widgets()
 
@@ -41,6 +43,8 @@ class SolarApp(tk.Tk):
         output_frame.pack(fill="x", padx=10, pady=5)
         ttk.Checkbutton(output_frame, text="PDF", variable=self.pdf_var).pack(side="left", padx=10)
         ttk.Checkbutton(output_frame, text="Excel", variable=self.excel_var).pack(side="left", padx=10)
+        ttk.Checkbutton(source_frame, text="استخدم Google CSE API", variable=self.use_cse_var).pack(side='left', padx=10)
+
 
         telegram_frame = ttk.LabelFrame(self, text="إرسال إلى تيليغرام")
         telegram_frame.pack(fill="x", padx=10, pady=5)
@@ -110,12 +114,18 @@ class SolarApp(tk.Tk):
         gov_filter = self.gov_var.get()
 
         if self.google_var.get():
-            self.update_status("جارٍ البحث في Google...", success=True)
-            try:
-                google_data = search_google()
-                if gov_filter != "الكل":
-                    google_data = [o for o in google_data if fuzz.partial_ratio(gov_filter, o.get('governorate', '')) > 80]
-                offers.extend(google_data)
+    if self.use_cse_var.get():
+        google_offers = search_google_cse()
+    else:
+        google_offers = search_google()
+
+    if selected_gov != "الكل":
+        google_offers = [
+            o for o in google_offers
+            if fuzz.partial_ratio(selected_gov, o.get('governorate', '')) > 80
+        ]
+    offers.extend(google_offers)
+
                 self.update_status(f"تم جلب {len(google_data)} عرض من Google", success=True)
             except Exception as e:
                 self.update_status(f"فشل Google: {e}", success=False)
