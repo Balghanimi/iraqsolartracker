@@ -3,8 +3,8 @@ from tkinter import ttk, scrolledtext
 from datetime import datetime
 import pandas as pd
 from fuzzywuzzy import fuzz
-
-from scraper_google import search_google
+from scraper_google_cse import search_google as search_google_cse
+from scraper_google_cse import search_google
 from scraper_opensooq import scrape_opensooq
 from database import setup_database
 from categorizer import categorize_offer
