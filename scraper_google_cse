@@ -1,10 +1,14 @@
-
+import os
 import requests
 
-API_KEY = "AIzaSyC--RKrSMyj4ud3MsTKAu2aLD9BZCstO2Q"
-SEARCH_ENGINE_ID = "84158ccbcb17b947db"
+API_KEY = os.environ.get("GOOGLE_CSE_API_KEY", "")
+SEARCH_ENGINE_ID = os.environ.get("GOOGLE_CSE_ENGINE_ID", "")
 
 def search_google(query="منظومة طاقة شمسية العراق", max_results=5):
+    if not API_KEY or not SEARCH_ENGINE_ID:
+        print("Error: GOOGLE_CSE_API_KEY and GOOGLE_CSE_ENGINE_ID env vars must be set")
+        return []
+
     url = f"https://www.googleapis.com/customsearch/v1"
     params = {
         "key": API_KEY,
